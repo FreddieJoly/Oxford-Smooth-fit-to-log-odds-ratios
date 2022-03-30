@@ -44,4 +44,7 @@ c(-10, -9, -9, -8, -8, -8, -7, -7, -7, -7, -6, -6, -6, -6, -6,
 
 sum(n0 == n1)
 
-
+cases=r1/n1
+controls=r0/n0
+tab=data.frame(cases,controls,year)
+View(tab)
