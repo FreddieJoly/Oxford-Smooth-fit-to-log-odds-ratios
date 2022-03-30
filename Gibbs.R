@@ -90,7 +90,7 @@ Gibbs = function(nchain, data, prop_sd){
     }
     
     # Mise à jour de sigma
-    a = prop_sd[4]
+    a = prop_sd[4] + ni/2
     b = (2 * prop_sd[5] + sum(b**2))/2
     
     sigma = 1/rgamma(1, a, 1/b)
