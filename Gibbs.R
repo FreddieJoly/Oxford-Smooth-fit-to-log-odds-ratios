@@ -32,7 +32,10 @@ y = data.frame(r1, n1, r0, n0, year)
 
 
 Gibbs = function(nchain, data, prop_sd){
-  # État initial
+  
+  ni = nrow(data)
+  
+  # État initial proposé par les auteurs
   alpha = 0
   beta1 = 0
   beta2 = 0
@@ -51,31 +54,81 @@ Gibbs = function(nchain, data, prop_sd){
   chain[1,] = init
   for (i in 1:nchain){
     # Mise à jour de alpha
+    prop =
     
+    top = 
+    bottom = 
+      
+    acc_prob = exp(top - bottom)
     
+    if (runif(1) < acc_prob){
+      alpha = prop
+    }
     
     # Mise à jour de beta1
+    prop =
+      
+    top = 
+    bottom = 
+      
+    acc_prob = exp(top - bottom)
     
-    
+    if (runif(1) < acc_prob){
+      beta1 = prop
+    }
     
     # Mise à jour de beta2
+    prop =
+      
+    top = 
+    bottom = 
+      
+    acc_prob = exp(top - bottom)
     
-    
+    if (runif(1) < acc_prob){
+      beta2 = prop
+    }
     
     # Mise à jour de sigma
+    a = prop_sd[4]
+    b = (2 * prop_sd[5] + sum(b**2))/2
     
-    
+    sigma = 1/rgamma(1, a, 1/b)
     
     # Mise à jour de mu
-    
+    for (i in 1:ni){
+      prop =
+        
+      top = 
+      bottom = 
+        
+      acc_prob = exp(top - bottom)
+      
+      if (runif(1) < acc_prob){
+        mu[i] = prop
+      }
+    }
     
     
     # Mise à jour de b
+    for (i in 1:ni){
+      prop =
+        
+      top = 
+      bottom = 
+        
+      acc_prob = exp(top - bottom)
+      
+      if (runif(1) < acc_prob){
+        b[i] = prop
+      }
+    }
     
     
     # Mise à jour de la chaîne
     chain[k+1,] = c(alpha, beta1, beta2, sigma, mu, b)
     
   }
-  
 }
+
+chain = Gibbs(10**4, y, c(1,1,1,0.001,0.001,1))
