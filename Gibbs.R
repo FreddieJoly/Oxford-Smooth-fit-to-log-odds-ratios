@@ -54,7 +54,7 @@ Gibbs = function(nchain, data, prop_sd){
   chain[1,] = init
   for (i in 1:nchain){
     # Mise à jour de alpha
-    prop =
+    prop = rnorm(1, alpha, prop_sd[1])
     
     top = 
     bottom = 
@@ -66,7 +66,7 @@ Gibbs = function(nchain, data, prop_sd){
     }
     
     # Mise à jour de beta1
-    prop =
+    prop = rnorm(1, beta1, prop_sd[2])
       
     top = 
     bottom = 
@@ -78,7 +78,7 @@ Gibbs = function(nchain, data, prop_sd){
     }
     
     # Mise à jour de beta2
-    prop =
+    prop = rnorm(1, beta2, prop_sd[3])
       
     top = 
     bottom = 
@@ -97,7 +97,7 @@ Gibbs = function(nchain, data, prop_sd){
     
     # Mise à jour de mu
     for (i in 1:ni){
-      prop =
+      prop = rnorm(1, mu[i], prop_sd[6])
         
       top = 
       bottom = 
@@ -112,7 +112,7 @@ Gibbs = function(nchain, data, prop_sd){
     
     # Mise à jour de b
     for (i in 1:ni){
-      prop =
+      prop = 
         
       top = 
       bottom = 
