@@ -1,0 +1,49 @@
+---
+title: 'Oxford : Smooth fit to log-odds ratios'
+author: "Vincent Guitteny, Freddie Joly, Tom Léchappé et Elyes Zribi"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  pdf_document:
+    fig_caption: yes
+    fig_width: 6
+    fig_height: 4
+    number_sections: true
+    keep_tex: true
+  html_document:
+    df_print: paged
+header-includes: 
+  \usepackage{stmaryrd}
+  \usepackage{float} 
+  \floatplacement{figure}{H}
+---
+
+\newenvironment{cols}[1][]{}{}
+\newenvironment{col}[1]{\begin{minipage}{#1}\ignorespaces}{%
+\end{minipage}
+\ifhmode\unskip\fi
+\aftergroup\useignorespacesandallpars}
+\def\useignorespacesandallpars#1\ignorespaces\fi{%
+#1\fi\ignorespacesandallpars}
+\makeatletter
+\def\ignorespacesandallpars{%
+  \@ifnextchar\par
+    {\expandafter\ignorespacesandallpars\@gobble}%
+    {}%
+}
+\makeatother
+
+\renewcommand\contentsname{Table des matières}
+\newpage
+\tableofcontents
+\newpage
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(comment = "")
+knitr::opts_chunk$set(fig.align = "center")
+
+library(coda)
+
+
+```
+
