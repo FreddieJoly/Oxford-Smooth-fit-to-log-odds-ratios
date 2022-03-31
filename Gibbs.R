@@ -30,8 +30,38 @@ year = c(-10, -9, -9, -8, -8, -8, -7, -7, -7, -7, -6, -6, -6, -6, -6, -5, -5, -5
 
 y = data.frame(r1, n1, r0, n0, year)
 
+sigmoid = function(x){
+  return(y = 1/(1+exp(-x))) 
+}
 
-Gibbs = function(nchain, data, prop_sd){
+p0 = function(mu){
+  return(sigmoid(mu))
+}
+
+p1 = function(mu, alpha, beta1, beta2, b, year){
+  return(sigmoid(mu + alpha + beta1*year + beta2*(year**2-22) + b))
+}
+
+lvr0 = function(mu){
+  r = 0
+  # Calcul de la log-vraisemblance de r0
+  for (i in 1:length(mu)){
+    r = r + r0[i] * log(p0(mu[i])) + (n0[i] - r0[i]) * log(1 - p0(mu[i]))
+  }
+  return(r)
+}
+
+lvr1 = function(mu, alpha, beta1, beta2, b, year){
+  r = 0
+  # Calcul de la log-vraisemblance de r1
+  for (i in 1:length(mu)){
+    r = r + r1[i] * log(p1(mu[i], alpha, beta1, beta2, b[i], year[i])) +
+      (n1[i] - r1[i]) * log(1 - p1(mu[i], alpha, beta1, beta2, b[i], year[i]))
+  }
+  return(r)
+}
+
+Gibbs = function(nchain, data, priors){
   
   ni = nrow(data)
   
@@ -52,12 +82,12 @@ Gibbs = function(nchain, data, prop_sd){
   # Début de la chaîne
   chain = matrix(NA, nchain + 1, 244)
   chain[1,] = init
-  for (i in 1:nchain){
+  for (k in 1:nchain){
     # Mise à jour de alpha
-    prop = rnorm(1, alpha, prop_sd[1])
+    prop = rnorm(1, alpha, sqrt(priors[1]))
     
-    top = 
-    bottom = 
+    top = - prop**2 / (2 * priors[1]) + lvr1(mu, prop, beta1, beta2, b, data[,5])
+    bottom = - alpha**2 / (2 * priors[1]) + lvr1(mu, alpha, beta1, beta2, b, data[,5])
       
     acc_prob = exp(top - bottom)
     
@@ -66,10 +96,10 @@ Gibbs = function(nchain, data, prop_sd){
     }
     
     # Mise à jour de beta1
-    prop = rnorm(1, beta1, prop_sd[2])
+    prop = rnorm(1, beta1, sqrt(priors[2]))
       
-    top = 
-    bottom = 
+    top = - prop**2 / (2 * priors[2]) + lvr1(mu, alpha, prop, beta2, b, data[,5])
+    bottom = - beta1**2 / (2 * priors[2]) + lvr1(mu, alpha, beta1, beta2, b, data[,5])
       
     acc_prob = exp(top - bottom)
     
@@ -78,10 +108,10 @@ Gibbs = function(nchain, data, prop_sd){
     }
     
     # Mise à jour de beta2
-    prop = rnorm(1, beta2, prop_sd[3])
+    prop = rnorm(1, beta2, sqrt(priors[3]))
       
-    top = 
-    bottom = 
+    top = - prop**2 / (2 * priors[3]) + lvr1(mu, alpha, beta1, prop, b, data[,5])
+    bottom = - beta2**2 / (2 * priors[3]) + lvr1(mu, alpha, beta1, beta2, b, data[,5])
       
     acc_prob = exp(top - bottom)
     
@@ -90,17 +120,23 @@ Gibbs = function(nchain, data, prop_sd){
     }
     
     # Mise à jour de sigma
-    a = prop_sd[4] + ni/2
-    b = (2 * prop_sd[5] + sum(b**2))/2
+    a.sigma = priors[4] + ni/2
+    b.sigma = (2 * priors[5] + sum(b**2))/2
     
-    sigma = 1/rgamma(1, a, 1/b)
+    sigma = 1/rgamma(1, a.sigma, 1/b.sigma)
     
     # Mise à jour de mu
-    for (i in 1:ni){
-      prop = rnorm(1, mu[i], prop_sd[6])
+    for (i in 1:length(mu)){
+      prop = rnorm(1, mu[i], sqrt(priors[6]))
         
-      top = 
-      bottom = 
+      top = - prop**2 / (2 * priors[2]) + 
+        r0[i] * log(p0(prop)) + (n0[i] - r0[i]) * log(1 - p0(prop)) + 
+        r1[i] * log(p1(prop, alpha, beta1, beta2, b[i], data[,5])) +
+        (n1[i] - r1[i]) * log(1 - p1(prop, alpha, beta1, beta2, b[i], data[,5]))
+      bottom = - mu[i]**2 / (2 * priors[2]) + 
+        r0[i] * log(p0(mu[i])) + (n0[i] - r0[i]) * log(1 - p0(mu[i])) + 
+        r1[i] * log(p1(mu[i], alpha, beta1, beta2, b[i], data[,5])) +
+        (n1[i] - r1[i]) * log(1 - p1(mu[i], alpha, beta1, beta2, b[i], data[,5]))
         
       acc_prob = exp(top - bottom)
       
@@ -109,13 +145,16 @@ Gibbs = function(nchain, data, prop_sd){
       }
     }
     
-    
     # Mise à jour de b
-    for (i in 1:ni){
-      prop = 
+    for (i in 1:length(b)){
+      prop = rnorm(1, b[i], sqrt(priors[7]))
         
-      top = 
-      bottom = 
+      top = - prop**2 / (2 * priors[7]) + 
+        r1[i] * log(p1(mu[i], alpha, beta1, beta2, prop, data[,5])) +
+        (n1[i] - r1[i]) * log(1 - p1(mu[i], alpha, beta1, beta2, prop, data[,5]))
+      bottom = - b[i]**2 / (2 * priors[7]) + 
+        r1[i] * log(p1(mu[i], alpha, beta1, beta2, b[i], data[,5])) +
+        (n1[i] - r1[i]) * log(1 - p1(mu[i], alpha, beta1, beta2, b[i], data[,5]))
         
       acc_prob = exp(top - bottom)
       
@@ -124,11 +163,18 @@ Gibbs = function(nchain, data, prop_sd){
       }
     }
     
-    
     # Mise à jour de la chaîne
     chain[k+1,] = c(alpha, beta1, beta2, sigma, mu, b)
     
   }
+  
+  return(chain)
 }
 
-chain = Gibbs(10**4, y, c(1,1,1,0.001,0.001,1))
+chain = Gibbs(10**4, y, c(1, 1, 1, 0.001, 0.001, 1, 1))
+
+library(coda)
+burnin = 1:1000
+plot(mcmc(chain[-burnin,])[,1:4])
+
+s = summary(mcmc(chain[-burnin,]))$statistics[1:4,]
