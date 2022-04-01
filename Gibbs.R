@@ -86,8 +86,8 @@ Gibbs = function(nchain, data, priors){
     # Mise à jour de alpha
     prop = rnorm(1, alpha, sqrt(priors[1]))
     
-    top = - prop**2 / (2 * priors[1]) + lvr1(mu, prop, beta1, beta2, b, data[,5])
-    bottom = - alpha**2 / (2 * priors[1]) + lvr1(mu, alpha, beta1, beta2, b, data[,5])
+    top = - prop**2 / (2 * 1000**2) + lvr1(mu, prop, beta1, beta2, b, data[,5])
+    bottom = - alpha**2 / (2 * 1000**2) + lvr1(mu, alpha, beta1, beta2, b, data[,5])
       
     acc_prob = exp(top - bottom)
     
@@ -98,8 +98,8 @@ Gibbs = function(nchain, data, priors){
     # Mise à jour de beta1
     prop = rnorm(1, beta1, sqrt(priors[2]))
       
-    top = - prop**2 / (2 * priors[2]) + lvr1(mu, alpha, prop, beta2, b, data[,5])
-    bottom = - beta1**2 / (2 * priors[2]) + lvr1(mu, alpha, beta1, beta2, b, data[,5])
+    top = - prop**2 / (2 * 1000**2) + lvr1(mu, alpha, prop, beta2, b, data[,5])
+    bottom = - beta1**2 / (2 * 1000**2) + lvr1(mu, alpha, beta1, beta2, b, data[,5])
       
     acc_prob = exp(top - bottom)
     
@@ -110,8 +110,8 @@ Gibbs = function(nchain, data, priors){
     # Mise à jour de beta2
     prop = rnorm(1, beta2, sqrt(priors[3]))
       
-    top = - prop**2 / (2 * priors[3]) + lvr1(mu, alpha, beta1, prop, b, data[,5])
-    bottom = - beta2**2 / (2 * priors[3]) + lvr1(mu, alpha, beta1, beta2, b, data[,5])
+    top = - prop**2 / (2 * 1000**2) + lvr1(mu, alpha, beta1, prop, b, data[,5])
+    bottom = - beta2**2 / (2 * 1000**2) + lvr1(mu, alpha, beta1, beta2, b, data[,5])
       
     acc_prob = exp(top - bottom)
     
@@ -123,20 +123,20 @@ Gibbs = function(nchain, data, priors){
     a.sigma = priors[4] + ni/2
     b.sigma = (2 * priors[5] + sum(b**2))/2
     
-    sigma = 1/rgamma(1, a.sigma, 1/b.sigma)
+    sigma = 1/sqrt(rgamma(1, a.sigma, 1/b.sigma))
     
     # Mise à jour de mu
     for (i in 1:length(mu)){
       prop = rnorm(1, mu[i], sqrt(priors[6]))
         
-      top = - prop**2 / (2 * priors[2]) + 
+      top = - prop**2 / (2 * 1000**2) + 
         r0[i] * log(p0(prop)) + (n0[i] - r0[i]) * log(1 - p0(prop)) + 
-        r1[i] * log(p1(prop, alpha, beta1, beta2, b[i], data[,5])) +
-        (n1[i] - r1[i]) * log(1 - p1(prop, alpha, beta1, beta2, b[i], data[,5]))
-      bottom = - mu[i]**2 / (2 * priors[2]) + 
+        r1[i] * log(p1(prop, alpha, beta1, beta2, b[i], data[,5][i])) +
+        (n1[i] - r1[i]) * log(1 - p1(prop, alpha, beta1, beta2, b[i], data[,5][i]))
+      bottom = - mu[i]**2 / (2 * 1000**2) + 
         r0[i] * log(p0(mu[i])) + (n0[i] - r0[i]) * log(1 - p0(mu[i])) + 
-        r1[i] * log(p1(mu[i], alpha, beta1, beta2, b[i], data[,5])) +
-        (n1[i] - r1[i]) * log(1 - p1(mu[i], alpha, beta1, beta2, b[i], data[,5]))
+        r1[i] * log(p1(mu[i], alpha, beta1, beta2, b[i], data[,5][i])) +
+        (n1[i] - r1[i]) * log(1 - p1(mu[i], alpha, beta1, beta2, b[i], data[,5][i]))
         
       acc_prob = exp(top - bottom)
       
@@ -149,12 +149,12 @@ Gibbs = function(nchain, data, priors){
     for (i in 1:length(b)){
       prop = rnorm(1, b[i], sqrt(priors[7]))
         
-      top = - prop**2 / (2 * priors[7]) + 
-        r1[i] * log(p1(mu[i], alpha, beta1, beta2, prop, data[,5])) +
-        (n1[i] - r1[i]) * log(1 - p1(mu[i], alpha, beta1, beta2, prop, data[,5]))
-      bottom = - b[i]**2 / (2 * priors[7]) + 
-        r1[i] * log(p1(mu[i], alpha, beta1, beta2, b[i], data[,5])) +
-        (n1[i] - r1[i]) * log(1 - p1(mu[i], alpha, beta1, beta2, b[i], data[,5]))
+      top = - prop**2 / (2 * sigma**2) + 
+        r1[i] * log(p1(mu[i], alpha, beta1, beta2, prop, data[,5][i])) +
+        (n1[i] - r1[i]) * log(1 - p1(mu[i], alpha, beta1, beta2, prop, data[,5][i]))
+      bottom = - b[i]**2 / (2 * sigma**2) + 
+        r1[i] * log(p1(mu[i], alpha, beta1, beta2, b[i], data[,5][i])) +
+        (n1[i] - r1[i]) * log(1 - p1(mu[i], alpha, beta1, beta2, b[i], data[,5][i]))
         
       acc_prob = exp(top - bottom)
       
@@ -171,7 +171,7 @@ Gibbs = function(nchain, data, priors){
   return(chain)
 }
 
-chain = Gibbs(10**4, y, c(1, 1, 1, 0.001, 0.001, 1, 1))
+chain = Gibbs(10**4, y, c(0.1, 0.1, 0.1, 0.001, 0.001, 1, 1))
 
 library(coda)
 burnin = 1:1000
