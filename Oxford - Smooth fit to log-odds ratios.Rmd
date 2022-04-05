@@ -246,7 +246,7 @@ On calcule la loi conditionnelle pleine du paramètre $\sigma^2$.
 
 \begin{align*}
 \Pi(\sigma^2|...) &\propto \Pi(\sigma^2) \prod_{i=1}^n\Pi(b_i|\sigma^2) \\
-&\propto \exp^{\frac{-b_{\sigma}}{\sigma^2}}(\sigma^2)^{-a_{\sigma}-1}\prod_{i=1}^{n} \exp\left(\frac{-b_i^2}{2\sigma^2}\right)(\sigma^2)^{-\frac{1}{2}} \\
+&\propto \exp\left({\frac{-b_{\sigma}}{\sigma^2}}\right)(\sigma^2)^{-a_{\sigma}-1}\prod_{i=1}^{n} \exp\left(\frac{-b_i^2}{2\sigma^2}\right)(\sigma^2)^{-\frac{1}{2}} \\
 &\propto (\sigma^2)^{-a_{\sigma}-1-\frac{n}{2}} \exp\left(\frac{-2b_{\sigma}-\sum\limits_{i=1}^n b_i^2}{2\sigma^2}\right)
 \end{align*}
 
@@ -262,7 +262,7 @@ On calcule la loi conditionnelle pleine du paramètre $\alpha$.
 
 \begin{align*}
 \Pi(\alpha|...) &\propto \Pi(\alpha) \prod_{i=1}^n\Pi(r_i^1|...) \\
-&\propto \exp^{\frac{-\alpha^2}{2\sigma_{\alpha}^2}}\prod_{i=1}^n \left((p_i^1)^{r_i^1}(1-p_i^1)^{n_i^1-r_i^1}\right)
+&\propto \exp\left({\frac{-\alpha^2}{2\sigma_{\alpha}^2}}\right)\prod_{i=1}^n \left((p_i^1)^{r_i^1}(1-p_i^1)^{n_i^1-r_i^1}\right)
 \end{align*}
 
 où $p_i^0=sigmoid(\mu_i)$ et $p_i^1=sigmoid(\mu_i+\alpha+\beta_1 year_i+\beta_2(year_i^2-22)+b_i)$.
@@ -278,26 +278,26 @@ où $p_i^0=sigmoid(\mu_i)$ et $p_i^1=sigmoid(\mu_i+\alpha+\beta_1 year_i+\beta_2
 
 \begin{align*}
 \Pi(\beta_1|...) &\propto \Pi(\beta_1) \prod_{i=1}^n\Pi(r_i^1|...) \\
-&\propto \exp^{\frac{-\beta_1^2}{2\sigma_{\beta_1}^2}}\prod_{i=1}^n \left((p_i^1)^{r_i^1}(1-p_i^1)^{n_i^1-r_i^1}\right)
+&\propto \exp\left({\frac{-\beta_1^2}{2\sigma_{\beta_1}^2}}\right)\prod_{i=1}^n \left((p_i^1)^{r_i^1}(1-p_i^1)^{n_i^1-r_i^1}\right)
 \end{align*}
 
 ## Loi conditionnelle pleine du paramètre $\beta_2$
 
 \begin{align*}
 \Pi(\beta_2|...) &\propto \Pi(\beta_2) \prod_{i=1}^n\Pi(r_i^1|...) \\
-&\propto \exp^{\frac{-\beta_2^2}{2\sigma_{\beta_2}^2}}\prod_{i=1}^n \left((p_i^1)^{r_i^1}(1-p_i^1)^{n_i^1-r_i^1}\right)
+&\propto \exp\left({\frac{-\beta_2^2}{2\sigma_{\beta_2}^2}}\right)\prod_{i=1}^n \left((p_i^1)^{r_i^1}(1-p_i^1)^{n_i^1-r_i^1}\right)
 \end{align*}
 
 ## Loi conditionnelle pleine du paramètre $b_i$
 
 \begin{align*}
 \Pi(b_i|...) &\propto \Pi(b_i|\sigma^2) \Pi(r_i^1|...) \\
-&\propto \exp^{\frac{-b_i^2}{2\sigma^2}} \left((p_i^1)^{r_i^1}(1-p_i^1)^{n_i^1-r_i^1}\right)
+&\propto \exp\left({\frac{-b_i^2}{2\sigma^2}}\right) \left((p_i^1)^{r_i^1}(1-p_i^1)^{n_i^1-r_i^1}\right)
 \end{align*}
 
 ## Loi conditionnelle pleine du paramètre $\mu_i$
 
 \begin{align*}
 \Pi(\mu_i|...) &\propto \Pi(\mu_i)\Pi(r_i^0|\mu_i)\Pi(r_i^1|...) \\
-&\propto \exp^{\frac{-\mu_i^2}{2\sigma_{\mu}^2}}\left((p_i^0)^{r_i^0}(1-p_i^0)^{n_i^0-r_i^0}\right)\left((p_i^1)^{r_i^1}(1-p_i^1)^{n_i^1-r_i^1}\right)
+&\propto \exp\left({\frac{-\mu_i^2}{2\sigma_{\mu}^2}}\right)\left((p_i^0)^{r_i^0}(1-p_i^0)^{n_i^0-r_i^0}\right)\left((p_i^1)^{r_i^1}(1-p_i^1)^{n_i^1-r_i^1}\right)
 \end{align*}
