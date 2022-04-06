@@ -228,11 +228,34 @@ s = summary(mcmc(chain[-burnin,]))$statistics[1:4,]
 
 # Présentation du jeu de données
 
+L'objectif de cette étude est d'observer l'influence que peut avoir l'exposition d'une mère aux rayons X pendant sa grossesse sur les décés des enfants par un cancer (de 0 à 9 ans). Les données sont séparées en 120 jeux de données en fonction de l'âge de l'enfant de son année de naissance (1944-1964). Dans notre cas, seule l'influence de l'année de naissance est retenue. Ces valeurs varient de $-10$ à $10$ en prenant en compte que $0$ correspond à l'année 1954. Pour chacune des 120 partitions, on dispose du nombre de décés $r$ parmi une population de $n$ enfants pour deux groupes : 
 
+* un groupe d'enfants dont les mères ont été exposées à des rayons X au cours de leur grossesse
+* un groupe "témoin" dont les mères n'ont pas été exposées.
 
 # Présentation du modèle
 
+Regardons maintenant le modèle proposé par les auteurs. Pour chaque strate $i$ et pour les deux groupes de population, le nombre de décés est donné par une loi binomiale : 
 
+* $r_i^0 \sim Bin(n_i^0,p_i^0)$
+* $r_i^1 \sim Bin(n_i^1,p_i^1)$.
+
+Ainsi les paramètres $p_i^0$ et $p_i^1$ sont donnés par les deux formules suivantes : 
+
+* $p_i^0 = sigmoid(\mu_i)$
+* $p_i^1 = sigmoid(\mu_i+\alpha+\beta_1 year_i+\beta_2(year_i^2-22)+b_i)$ ou bien $p_i^1 = sigmoid(\mu_i+log\psi_i)$ où $log\psi_i = \alpha+\beta_1 year_i+\beta_2(year_i^2-22)+b_i$.
+
+Le paramètre $b_i$ suit une loi normale $\mathcal N(0,\sigma^2)$.
+
+Il reste donc les lois "non informatives" des paramètres suivants : 
+
+* $\alpha \sim\mathcal N(0,\sigma_{\alpha}^2)$
+* $\beta_1 \sim\mathcal N(0,\sigma_{\beta_1}^2)$
+* $\beta_2 \sim\mathcal N(0,\sigma_{\beta_2}^2)$
+* $\sigma^2 \sim InvGamma(a_{\sigma},b_{\sigma})$
+* $\mu_i \sim\mathcal N(0,\sigma_{\mu}^2)$.
+
+On représente le modèle hiérarchique sous la forme d'un graphe ci-dessous.
 
 ![Modèle hierarchique](Model.jpg){width=50%}
 
