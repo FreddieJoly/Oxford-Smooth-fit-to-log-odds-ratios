@@ -6,7 +6,7 @@
 ]{article}
 \title{Oxford : Smooth fit to log-odds ratios}
 \author{Vincent Guitteny, Freddie Joly, Tom Léchappé et Elyes Zribi}
-\date{05 avril 2022}
+\date{06 avril 2022}
 
 \usepackage{amsmath,amssymb}
 \usepackage{lmodern}
@@ -95,8 +95,73 @@
 \section{Présentation du jeu de
 données}\label{pruxe9sentation-du-jeu-de-donnuxe9es}}
 
+L'objectif de cette étude est d'observer l'influence que peut avoir
+l'exposition d'une mère aux rayons X pendant sa grossesse sur les décés
+des enfants par un cancer (de 0 à 9 ans). Les données sont séparées en
+120 jeux de données en fonction de l'âge de l'enfant de son année de
+naissance (1944-1964). Dans notre cas, seule l'influence de l'année de
+naissance est retenue. Ces valeurs varient de \(-10\) à \(10\) en
+prenant en compte que \(0\) correspond à l'année 1954. Pour chacune des
+120 partitions, on dispose du nombre de décés \(r\) parmi une population
+de \(n\) enfants pour deux groupes :
+
+\begin{itemize}
+\tightlist
+\item
+  un groupe d'enfants dont les mères ont été exposées à des rayons X au
+  cours de leur grossesse
+\item
+  un groupe ``témoin'' dont les mères n'ont pas été exposées.
+\end{itemize}
+
 \hypertarget{pruxe9sentation-du-moduxe8le}{%
 \section{Présentation du modèle}\label{pruxe9sentation-du-moduxe8le}}
+
+Regardons maintenant le modèle proposé par les auteurs. Pour chaque
+strate \(i\) et pour les deux groupes de population, le nombre de décés
+est donné par une loi binomiale :
+
+\begin{itemize}
+\tightlist
+\item
+  \(r_i^0 \sim Bin(n_i^0,p_i^0)\)
+\item
+  \(r_i^1 \sim Bin(n_i^1,p_i^1)\).
+\end{itemize}
+
+Ainsi les paramètres \(p_i^0\) et \(p_i^1\) sont donnés par les deux
+formules suivantes :
+
+\begin{itemize}
+\tightlist
+\item
+  \(p_i^0 = sigmoid(\mu_i)\)
+\item
+  \(p_i^1 = sigmoid(\mu_i+\alpha+\beta_1 year_i+\beta_2(year_i^2-22)+b_i)\)
+  ou bien \(p_i^1 = sigmoid(\mu_i+log\psi_i)\) où
+  \(log\psi_i = \alpha+\beta_1 year_i+\beta_2(year_i^2-22)+b_i\).
+\end{itemize}
+
+Le paramètre \(b_i\) suit une loi normale \(\mathcal N(0,\sigma^2)\).
+
+Il reste donc les lois ``non informatives'' des paramètres suivants :
+
+\begin{itemize}
+\tightlist
+\item
+  \(\alpha \sim\mathcal N(0,\sigma_{\alpha}^2)\)
+\item
+  \(\beta_1 \sim\mathcal N(0,\sigma_{\beta_1}^2)\)
+\item
+  \(\beta_2 \sim\mathcal N(0,\sigma_{\beta_2}^2)\)
+\item
+  \(\sigma^2 \sim InvGamma(a_{\sigma},b_{\sigma})\)
+\item
+  \(\mu_i \sim\mathcal N(0,\sigma_{\mu}^2)\).
+\end{itemize}
+
+On représente le modèle hiérarchique sous la forme d'un graphe
+ci-dessous.
 
 \begin{figure}
 \centering
