@@ -238,7 +238,7 @@ s = summary(mcmc(chain[-burnin,]))$statistics[1:4,]
 
 # Calculs des lois conditionnelles pleines
 
-On veut maintenant calculer les lois conditionnelles pleines de nos paramètres afin de mettre en oeuvre un échantilloneur de Gibbs sur ce modèle. Bien que la loi conditionnelle pleine de $\sigma^2$ soit identifiable, celles des autres paramètres ne sont pas identifiables. On donne ici un exemple de calcul pour le paramètre $\alpha$, les autres calcul sont donnés en annexe. Les noeuds de notre modèle représentés par $log(\psi_i)$, $p_i^0$ et $p_i^1$ étant non stochastiques dans notre modèle, on peut les ignorer lors du calcul des lois conditionnelles pleines.
+On veut maintenant calculer les lois conditionnelles pleines de nos paramètres afin de mettre en oeuvre un échantilloneur de Gibbs sur ce modèle. Bien que la loi conditionnelle pleine de $\sigma^2$ soit identifiable, celles des autres paramètres ne sont pas identifiables. On donne ici un exemple de calcul pour le paramètre $\alpha$, les autres calculs sont donnés en annexe. Les noeuds de notre modèle représentés par $log(\psi_i)$, $p_i^0$ et $p_i^1$ étant non stochastiques dans notre modèle, on peut les ignorer lors du calcul des lois conditionnelles pleines.
 
 ## Calcul pour $\sigma^2$
 
