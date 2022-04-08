@@ -6,7 +6,7 @@
 ]{article}
 \title{Oxford : Smooth fit to log-odds ratios}
 \author{Vincent Guitteny, Freddie Joly, Tom Léchappé et Elyes Zribi}
-\date{06 avril 2022}
+\date{08 avril 2022}
 
 \usepackage{amsmath,amssymb}
 \usepackage{lmodern}
@@ -46,6 +46,16 @@
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -177,11 +187,11 @@ On veut maintenant calculer les lois conditionnelles pleines de nos
 paramètres afin de mettre en oeuvre un échantilloneur de Gibbs sur ce
 modèle. Bien que la loi conditionnelle pleine de \(\sigma^2\) soit
 identifiable, celles des autres paramètres ne sont pas identifiables. On
-donne ici un exemple de calcul pour le paramètre \(\alpha\), les autres
-calcul sont donnés en annexe. Les noeuds de notre modèle représentés par
-\(log(\psi_i)\), \(p_i^0\) et \(p_i^1\) étant non stochastiques dans
-notre modèle, on peut les ignorer lors du calcul des lois
-conditionnelles pleines.
+donne ici un exemple de calcul pour le paramètre \(\sigma ^2\), les
+autres calculs sont donnés en annexe. Les noeuds de notre modèle
+représentés par \(log(\psi_i)\), \(p_i^0\) et \(p_i^1\) étant non
+stochastiques dans notre modèle, on peut les ignorer lors du calcul des
+lois conditionnelles pleines.
 
 \hypertarget{calcul-pour-sigma2}{%
 \subsection{\texorpdfstring{Calcul pour
@@ -218,6 +228,40 @@ où \(p_i^0=sigmoid(\mu_i)\) et
 \hypertarget{impluxe9mentation-et-ruxe9sultats}{%
 \section{Implémentation et
 résultats}\label{impluxe9mentation-et-ruxe9sultats}}
+
+Maintenant que nous avons calculer toutes nos lois conditionnelles
+pleines, nous pouvons utiliser un échantilloneur de Gibbs afin de
+comparer nos résultats avec ceux proposés.
+
+Afin de comparer nos résultats avec ceux de l'expérience, nous avons
+utilisé un ``burnin'' de 1000 sur la chaîne de Markov de taille totale
+10 000 qui est retourné par notre fonction simulant un échantilloneur de
+Gibbs.
+
+On retrouve des résultats similaires à ceux proposés comme on peut
+l'observer dans le tableau ci-dessous.
+
+\begin{longtable}[]{@{}cc@{}}
+\toprule
+& Moyenne \\
+\midrule
+\endhead
+\(\alpha\) & 0.588 \\
+\(\beta_1\) & -0.046 \\
+\(\beta_2\) & 0.008 \\
+\(\sigma^2\) & 0.129 \\
+\bottomrule
+\end{longtable}
+
+\begin{center}
+Table 1 : Moyenne des paramètres $\alpha$, $\beta_1$, $\beta_2$ et $\sigma^2$.
+\end{center}
+
+L'ensemble de notre code est disponible dans le fichier Gibbs.R sur la
+page Github :
+\url{https://github.com/FreddieJoly/Oxford-Smooth-fit-to-log-odds-ratios}
+
+\newpage
 
 \hypertarget{annexe}{%
 \section{Annexe}\label{annexe}}
